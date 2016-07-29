@@ -1,0 +1,101 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>we are come to chat!</title>
+<script src="//cdn.bootcss.com/jquery/1.7.2/jquery.min.js"></script>
+<script>
+    function listen_for_events(timestamp) {
+        $.ajax("/chat/pull/"+timestamp, {
+            success:function(data, code, xhr) {
+                for (var i=0; i<data.chats.length; i++) {
+                    var msg = data.chats[i].id+" : ";
+                    msg += "<textarea name=\"text\">"+data.chats[i].row+"</textarea>";
+                    $("#chat_list").prepend("<li>"+msg);
+                }
+                listen_for_events(data.timestamp);
+            },
+            error:function() {
+                listen_for_events(timestamp);
+            }
+        });
+    }
+
+    function submit() {
+        $('#tips').html('sending ...');
+        var nickname = $('#nickname').val();
+        var text = $('#text').val();
+
+        // if(!nickname){
+        //     $('#tips').html('nickname is empty');
+        //     return false;
+        // if(!text) {
+        //     $('#tips').html('text is empty');
+        //     return false;
+        // }
+        // alert(nickname+text);
+        $.post(
+            "{% url action="create" %}",
+            {'nickname':nickname, 'text':text},
+            function(json) {
+                if (0==json.code) {
+                    $('#tips').html('ok');
+                    $('#text').val('');
+                } else if(json.msg) {
+                    $('#tips').html(json.msg);
+                } else {
+                    $('#tips').html('error');
+                }
+            }
+        );
+    }
+
+    $(document).ready(function() {
+        listen_for_events({{ timestamp }});
+
+        $('#text').keydown(function(e){
+            if(e.keyCode==13){
+                submit();
+            }
+        });
+    });
+
+</script>
+</head>
+<body>
+    <form method="post">
+        <table width="100%">
+            <tr>
+                <td colspan="2" align="left">欢迎
+                </td>
+            </tr>
+            <tr>
+            <th width="160">Who are you :</th>
+            <td align="left">
+                <input type="text" name="nickname" id="nickname" value=""/>
+                <span  id="tips" style="color:red;">欢迎</span>
+            </td>
+            </tr>
+            <tr>
+            <th width="160">Enter a message:</th>
+            <td align="left"><textarea name="text" id="text" cols="60" rows="4">{% if new_msg %}{{ new_msg.text }}{% endif %}</textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a href="JavaScript:;" onclick="submit();" >
+                        提交
+                    </a>
+                    <span style="color:red">输入内容，按回车键可以提交数据</span>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <ul id="chat_list">
+        {% for chat in chats %}
+        <li>
+        {{ chat.id }} : <textarea name="text">{{ chat.row }}</textarea>
+        {% empty %}
+        <li>No chats!
+        {% endfor %}
+    </ul>
+</body>
+</html>
