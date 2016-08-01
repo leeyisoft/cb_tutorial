@@ -14,5 +14,6 @@ before_create() ->
                                     [{return, list}])),
     {ok, ModifiedRecord}.
 
-after_create() ->
-    boss_mq:push("new-greetings", THIS).
+%% 在 priv/init/cb_tutorial_01_news.erl 的 init/0 里面添加了监视功能功能，所以这里注释掉了
+% after_create() ->
+%     boss_mq:push("new-greetings", THIS).
