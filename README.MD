@@ -43,7 +43,7 @@ drwxrwxrwx  11 leeyi  staff   374B Jul 24 19:04 src
 启动服务：
 
 ```shell
-./rebar get-deps compile #
+./rebar get-deps compile # 不成功的话 修改 rebar.config:2 的tag 为 v0.8.19
 ./init-dev.sh
 ```
 
