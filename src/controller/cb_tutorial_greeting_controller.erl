@@ -17,8 +17,8 @@ json('GET', []) ->
 
 list('GET', []) ->
     Greetings = boss_db:find(greeting, []),
-    % Greetings2 = [{greeting, Id, [[]|unicode:characters_to_binary(Text, utf8, utf8)]} || {greeting, Id, Text} <- Greetings],
-    Greetings2 = [{greeting, Id, [[]|list_to_binary(Text)]} || {greeting, Id, Text} <- Greetings],
+    Greetings2 = [{greeting, Id, [[]|unicode:characters_to_binary(Text, utf8, utf8)], CreateTime} || {greeting, Id, Text, CreateTime} <- Greetings],
+    % Greetings2 = [{greeting, Id, [[]|list_to_binary(Text)]} || {greeting, Id, Text} <- Greetings],
     {ok, [{greetings, Greetings2}]}.
 
 
@@ -26,7 +26,8 @@ create('GET', []) ->
     ok;
 create('POST', []) ->
     GreetingText = Req:post_param("greeting_text"),
-    NewGreeting = greeting:new(id, GreetingText),
+    CreateTime   = calendar:datetime_to_gregorian_seconds(erlang:universaltime()),
+    NewGreeting  = greeting:new(id, GreetingText, CreateTime),
     case NewGreeting:save() of
         {ok, SavedGreeting} ->
             {redirect, [{action, "list"}]};

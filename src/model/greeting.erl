@@ -1,4 +1,4 @@
--module(greeting, [Id, GreetingText]).
+-module(greeting, [Id, GreetingText, CreateTime]).
 -compile(export_all).
 
 validation_tests() ->

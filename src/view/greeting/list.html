@@ -8,14 +8,14 @@
 {% if greetings %}
   {% for greeting in greetings %}
     <li>
-    {{ greeting.id }} : {{ greeting.greeting_text }}
+    {{ greeting.id }} : {{ greeting.greeting_text }} | {{ greeting.create_time }}
   {% endfor %}
 {% else %}
     <li>No greetings!
 {% endif %}
 </ul>
 {% endblock %}
-<p><a href="{% url action="create" %}">New greeting...</a></p> 
+<p><a href="{% url action="create" %}">New greeting...</a></p>
 
 <form method="post" action="{% url action="goodbye" %}">
     Delete:
