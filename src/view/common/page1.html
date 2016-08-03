@@ -1,0 +1,14 @@
+<div class="page">
+    {% if pages %}
+        {% ifnotequal pages|length "1" %}
+        Pages:
+        {% for page in pages %}
+            {% ifequal page curpage %}
+            <strong>{{ page }}</strong>
+            {% else %}
+            <a href="{{action}}{{ page}}">{{ page }}</a>
+            {% endifequal %}
+        {% endfor %}
+        {% endifnotequal %}
+    {% endif %}
+</div>

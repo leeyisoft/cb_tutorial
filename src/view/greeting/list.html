@@ -8,7 +8,8 @@
 {% if greetings %}
   {% for greeting in greetings %}
     <li>
-    {{ greeting.id }} : {{ greeting.greeting_text }} | {{ greeting.create_time }}
+    {{ greeting.id }} : {{ greeting.greeting_text }} | {{ greeting.create_time|date:"Y-m-d H:i:s" }}
+    || {{ greeting.greeting_text|leetest:"P1" }}
   {% endfor %}
 {% else %}
     <li>No greetings!

@@ -17,7 +17,7 @@ json('GET', []) ->
 
 list('GET', []) ->
     Greetings = boss_db:find(greeting, []),
-    Greetings2 = [{greeting, Id, [[]|unicode:characters_to_binary(Text, utf8, utf8)], CreateTime} || {greeting, Id, Text, CreateTime} <- Greetings],
+    Greetings2 = [{greeting, Id, [[]|unicode:characters_to_binary(Text, utf8, utf8)], calendar:gregorian_seconds_to_datetime(CreateTime)} || {greeting, Id, Text, CreateTime} <- Greetings],
     % Greetings2 = [{greeting, Id, [[]|list_to_binary(Text)]} || {greeting, Id, Text} <- Greetings],
     {ok, [{greetings, Greetings2}]}.
 

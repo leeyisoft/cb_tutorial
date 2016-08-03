@@ -1,21 +1,66 @@
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>we are come to chat!</title>
-<script src="//cdn.bootcss.com/jquery/1.7.2/jquery.min.js"></script>
-<script>
+{% extends "common/base.html" %}
+{% block title %}we are come to chat!{% endblock %}
+
+{% block body %}
+    <form method="post">
+        <table width="100%">
+            <tr>
+                <td colspan="2" align="left">欢迎
+                </td>
+            </tr>
+            <tr>
+            <th width="160">Who are you :</th>
+            <td align="left">
+                <input type="text" name="nickname" id="nickname" value=""/>
+                <span  id="tips" style="color:red;">欢迎</span>
+            </td>
+            </tr>
+            <tr>
+            <th width="160">Enter a message:</th>
+            <td align="left"><textarea name="text" id="text" cols="60" rows="4">{% if new_msg %}{{ new_msg.text }}{% endif %}</textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a href="JavaScript:;" onclick="submit();" >
+                        提交
+                    </a>
+                    <span style="color:red">输入内容，按回车键可以提交数据</span>
+                    <a href="{% url action="list/chats/1" %}" target="_blank">历史记录</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <ul id="chat_list">
+        {% for chat in chats %}
+        <li>
+        {{ chat.id }}, {{ chat.nickname }} , {{ chat.create_time|date:"Y-m-d H:i:s" }} :<br/> <textarea name="text">{{ chat.text }}</textarea>
+        {% empty %}
+        <li>No chats!
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block meta_scripts %}
+<script type="text/javascript">
+    var limit = {{ limit }};
+
     function listen_for_events(timestamp) {
         $.ajax("/chat/pull/"+timestamp, {
             success:function(data, code, xhr) {
                 for (var i=0; i<data.chats.length; i++) {
-                    var msg = data.chats[i].id+" : ";
-                    msg += "<textarea name=\"text\">"+data.chats[i].row+"</textarea>";
+                    var msg = data.chats[i].id+", "+data.chats[i].nickname+", "+data.chats[i].create_time+" : ";
+                    msg += "<br/><textarea name=\"text\">"+data.chats[i].text+"</textarea>";
                     $("#chat_list").prepend("<li>"+msg);
+                    if ($("#chat_list li").size()>limit) {
+                        $("#chat_list li").eq(-1).remove();
+                    } else {
+                        ++limit
+                    }
                 }
                 listen_for_events(data.timestamp);
             },
             error:function() {
-                listen_for_events(timestamp);
+                setTimeout(function() {listen_for_events(timestamp);}, 1000);
             }
         });
     }
@@ -60,42 +105,4 @@
     });
 
 </script>
-</head>
-<body>
-    <form method="post">
-        <table width="100%">
-            <tr>
-                <td colspan="2" align="left">欢迎
-                </td>
-            </tr>
-            <tr>
-            <th width="160">Who are you :</th>
-            <td align="left">
-                <input type="text" name="nickname" id="nickname" value=""/>
-                <span  id="tips" style="color:red;">欢迎</span>
-            </td>
-            </tr>
-            <tr>
-            <th width="160">Enter a message:</th>
-            <td align="left"><textarea name="text" id="text" cols="60" rows="4">{% if new_msg %}{{ new_msg.text }}{% endif %}</textarea></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <a href="JavaScript:;" onclick="submit();" >
-                        提交
-                    </a>
-                    <span style="color:red">输入内容，按回车键可以提交数据</span>
-                </td>
-            </tr>
-        </table>
-    </form>
-    <ul id="chat_list">
-        {% for chat in chats %}
-        <li>
-        {{ chat.id }} : <textarea name="text">{{ chat.row }}</textarea>
-        {% empty %}
-        <li>No chats!
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% endblock %}

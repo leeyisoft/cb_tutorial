@@ -1,0 +1,16 @@
+{% extends "common/base.html" %}
+{% block title %}chats list {% endblock %}
+
+{% block body %}
+
+    {% include "common/page1.html" %}
+    <ul id="chat_list">
+        {% for chat in chats %}
+        <li>
+        {{ chat.id }}, {{ chat.nickname }} , {{ chat.create_time|date:"Y-m-d H:i:s" }} :<br/> <textarea name="text">{{ chat.text }}</textarea>
+        {% empty %}
+        <li>No chats!
+        {% endfor %}
+    </ul>
+    {% include "common/page1.html" %}
+{% endblock %}

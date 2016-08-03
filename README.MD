@@ -73,3 +73,34 @@ todo
     * 一个消息队列服务（BossMQ）
     * 一个模型事件系统(BossNews)
     * 一个电子邮件服务器(BossMail)
+
+# 数据库设置
+修改配置文件 boss.config “Database”一节：
+```config
+{db_host, "localhost"},
+{db_port, 3306},
+{db_adapter, mysql},
+{db_username, "admin"},
+{db_password, "123456"},
+{db_database, "cb_tutorial"},
+```
+
+```sql
+CREATE SCHEMA `cb_tutorial` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE `cb_tutorial`.`greetings` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `greeting_text` VARCHAR(140) NULL,
+  `create_time` BIGINT(16) NULL DEFAULT 0 COMMENT '公历 0 年开始到以给定的日期和时间(当前的世界标准时间（UTC）)为结束间的秒数',
+  PRIMARY KEY (`id`)
+) PACK_KEYS = Default;
+
+CREATE TABLE `cb_tutorial`.`chats` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `channel` VARCHAR(45) NOT NULL DEFAULT 'chats' COMMENT '聊天频道',
+  `nickname` VARCHAR(45) NOT NULL COMMENT '聊天用户昵称',
+  `text` VARCHAR(140) NULL COMMENT '聊天内容',
+  `create_time` BIGINT(16) NULL DEFAULT 0 COMMENT '公历 0 年开始到以给定的日期和时间(当前的世界标准时间（UTC）)为结束间的秒数',
+  PRIMARY KEY (`id`)
+) PACK_KEYS = Default, COLLATE = utf8_unicode_ci, ENGINE = MyISAM , COMMENT = '聊天室记录' ;
+```
