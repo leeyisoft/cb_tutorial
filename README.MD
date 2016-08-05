@@ -76,16 +76,30 @@ todo
 
 # 后端配置
 
-第 deps/boss/rebar.config:36 行，如果设置为
+设置文件 boss.config，第 330 行，如果设置为
 ```config
 {backend, yaws},
 ```
-需要修改过文件（deps/boss/rebar.config:36） ，把前面的注释去掉，之后
+需要修改过文件（deps/boss/rebar.config），把第36行前面的注释去掉
+```config
+%{yaws,                  ".*",   {git, "https://github.com/klacke/yaws.git",               {tag, "yaws-2.0"}}},
+// 修改为
+{yaws,                  ".*",   {git, "https://github.com/klacke/yaws.git",               {tag, "yaws-2.0"}}},
+```
+如果36行没有yaws，主要修改 rebar.config 第2行 的tag值为 v0.9.pre-alpha-2 ，之后，执行shell命令：
+
+顺带把 deps/boss/rebar.config 第32行 cowboy 注释掉，
+
 ```shell
+./rebar delete-deps
+// 如果 deps还有文件，就直接
+rm -rf deps
+
 ./rebar get-deps
 
+./rebar compile
 ```
-
+get-deps 期间可能有失败，获取那个依赖失败，直接用 rm -rf deps/[deps-name] ，之后再 rebar get-deps
 
 
 # 数据库设置
