@@ -74,6 +74,20 @@ todo
     * 一个模型事件系统(BossNews)
     * 一个电子邮件服务器(BossMail)
 
+# 后端配置
+
+第 deps/boss/rebar.config:36 行，如果设置为
+```config
+{backend, yaws},
+```
+需要修改过文件（deps/boss/rebar.config:36） ，把前面的注释去掉，之后
+```shell
+./rebar get-deps
+
+```
+
+
+
 # 数据库设置
 修改配置文件 boss.config “Database”一节：
 ```config

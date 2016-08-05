@@ -5,3 +5,5 @@
 /node_modules/
 *.beam
 log
+boss_webserver:8001.access
+boss_webserver:8001.auth

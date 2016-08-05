@@ -11,7 +11,7 @@ create('POST', []) ->
     NewChat    = chat:new(id, Channel, Nickname, Text, CreateTime),
     case NewChat:save() of
         {ok, SavedChat} ->
-            {json, [{code, 0}, {msg, SavedChat}]};
+            {json, [{code, 0}, {msg, [SavedChat]}]};
         {error, ErrorList} ->
             {json, [{code, 3}, {msg, list_to_bitstring(ErrorList)}]}
     end.

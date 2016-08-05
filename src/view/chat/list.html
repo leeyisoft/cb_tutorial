@@ -6,7 +6,7 @@
     {% include "common/page1.html" %}
     <ul id="chat_list">
         {% for chat in chats %}
-        <li chat_id="{{ chat.id }}" class="chat">
+        <li id="{{ chat.id }}" class="chat">
         {{ chat.id }}, {{ chat.nickname }} , {{ chat.create_time|date:"Y-m-d H:i:s" }} :<br/> <textarea name="text">{{ chat.text }}</textarea>
         {% empty %}
         <li>No chats!
@@ -24,7 +24,7 @@
 $(document).ready(function() {
 
     $('.chat').bind('click', function() {
-        var chat_id = $(this).attr('chat_id');
+        var chat_id = $(this).attr('id');
 
         layer.confirm('Sure to delete it('+chat_id+')?', {icon: 3, title:'提示'}, function(index) {
 
