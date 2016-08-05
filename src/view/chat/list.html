@@ -6,11 +6,48 @@
     {% include "common/page1.html" %}
     <ul id="chat_list">
         {% for chat in chats %}
-        <li>
+        <li chat_id="{{ chat.id }}" class="chat">
         {{ chat.id }}, {{ chat.nickname }} , {{ chat.create_time|date:"Y-m-d H:i:s" }} :<br/> <textarea name="text">{{ chat.text }}</textarea>
         {% empty %}
         <li>No chats!
         {% endfor %}
     </ul>
     {% include "common/page1.html" %}
+{% endblock %}
+{% block meta_style %}
+
+{% endblock %}
+{% block meta_scripts %}
+<link rel="stylesheet" href="/static/layer/skin/layer.css" media="all">
+<script src="/static/layer/layer.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $('.chat').bind('click', function() {
+        var chat_id = $(this).attr('chat_id');
+
+        layer.confirm('Sure to delete it('+chat_id+')?', {icon: 3, title:'提示'}, function(index) {
+
+            $.post(
+                "{% url action="delete" %}",
+                {'chat_id':chat_id},
+                function(json) {
+                    if (0==json.code) {
+                        $('#tips').html('ok');
+                        $('#text').val('');
+                    } else if(json.msg) {
+                        $('#tips').html(json.msg);
+                    } else {
+                        $('#tips').html('error');
+                    }
+                }
+            );
+
+            layer.close(index);
+        });
+
+    });
+
+});
+</script>
 {% endblock %}

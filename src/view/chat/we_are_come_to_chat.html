@@ -32,7 +32,7 @@
     </form>
     <ul id="chat_list">
         {% for chat in chats %}
-        <li>
+        <li id="{{ chat.id }}">
         {{ chat.id }}, {{ chat.nickname }} , {{ chat.create_time|date:"Y-m-d H:i:s" }} :<br/> <textarea name="text">{{ chat.text }}</textarea>
         {% empty %}
         <li>No chats!
@@ -44,23 +44,42 @@
 <script type="text/javascript">
     var limit = {{ limit }};
 
-    function listen_for_events(timestamp) {
-        $.ajax("/chat/pull/"+timestamp, {
+    function listen_for_createchat(timestamp) {
+        $.ajax("/chat/pull/chats/"+timestamp, {
             success:function(data, code, xhr) {
                 for (var i=0; i<data.chats.length; i++) {
-                    var msg = data.chats[i].id+", "+data.chats[i].nickname+", "+data.chats[i].create_time+" : ";
-                    msg += "<br/><textarea name=\"text\">"+data.chats[i].text+"</textarea>";
-                    $("#chat_list").prepend("<li>"+msg);
+                    var chat = data.chats[i];
+                    var msg = chat.id+", "+chat.nickname+", "+chat.create_time+" : ";
+                    msg += "<br/><textarea name=\"text\">"+chat.text+"</textarea>";
+                    $("#chat_list").prepend("<li id=\""+chat.id+"\">"+msg);
+
                     if ($("#chat_list li").size()>limit) {
                         $("#chat_list li").eq(-1).remove();
                     } else {
-                        ++limit
+                        ++limit;
                     }
                 }
-                listen_for_events(data.timestamp);
+                listen_for_createchat(data.timestamp);
             },
             error:function() {
-                setTimeout(function() {listen_for_events(timestamp);}, 1000);
+                setTimeout(function() {listen_for_createchat(timestamp);}, 1000);
+            }
+        });
+    }
+    function listen_for_delchat(timestamp) {
+        $.ajax("/chat/pull/delchat/"+timestamp, {
+            success:function(data, code, xhr) {
+                for (var i=0; i<data.chats.length; i++) {
+                    var chat = data.chats[i];
+                    $("#"+chat.id).remove();
+                    if (limit>0) {
+                        --limit;
+                    }
+                }
+                listen_for_delchat(data.timestamp);
+            },
+            error:function() {
+                setTimeout(function() {listen_for_delchat(timestamp);}, 2000);
             }
         });
     }
@@ -70,14 +89,15 @@
         var nickname = $('#nickname').val();
         var text = $('#text').val();
 
-        // if(!nickname){
-        //     $('#tips').html('nickname is empty');
-        //     return false;
-        // if(!text) {
-        //     $('#tips').html('text is empty');
-        //     return false;
-        // }
-        // alert(nickname+text);
+        if(!nickname){
+            $('#tips').html('nickname is empty');
+            return false;
+        }
+        if(!text) {
+            $('#tips').html('text is empty');
+            return false;
+        }
+
         $.post(
             "{% url action="create" %}",
             {'nickname':nickname, 'text':text},
@@ -95,7 +115,8 @@
     }
 
     $(document).ready(function() {
-        listen_for_events({{ timestamp }});
+        listen_for_createchat({{ timestamp }});
+        listen_for_delchat({{ timestamp }});
 
         $('#text').keydown(function(e){
             if(e.keyCode==13){

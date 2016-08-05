@@ -2,6 +2,7 @@
 -compile(export_all).
 
 
+%% 提交表单
 create('POST', []) ->
     Channel    = "chats",
     Nickname   = Req:post_param("nickname"),
@@ -15,13 +16,24 @@ create('POST', []) ->
             {json, [{code, 3}, {msg, list_to_bitstring(ErrorList)}]}
     end.
 
+%% 删除数据
+delete('POST', []) ->
+    ChartId = Req:post_param("chat_id"),
+    Chat    = boss_db:find(chat, [{id, 'equals', ChartId}]),
+    [Chat1] = Chat,
+    boss_db:delete(ChartId),
+    boss_mq:push("delchat", Chat1),
+    {json, [{chat_id, ChartId}]}.
 
-pull('GET', [LastTimestamp]) ->
-    {ok, Timestamp, Chats} = boss_mq:pull("chats",
-        list_to_integer(LastTimestamp)),
+%% 拉取数据
+pull('GET', [Channel, LastTimestamp]) ->
+    {ok, Timestamp, Chats} = boss_mq:pull(Channel, list_to_integer(LastTimestamp)),
+
     Chats2 = [{chat, Id, Channel, Nickname, Text, erlydtl_dateformat:format(calendar:gregorian_seconds_to_datetime(CreateTime), "Y-m-d H:i:s")} || {chat, Id, Channel, Nickname, Text, CreateTime} <- Chats],
+
     {json, [{timestamp, Timestamp}, {chats, Chats2}]}.
 
+%% 聊天室界面
 we_are_come_to_chat('GET', []) ->
 
     % 限制聊天记录显示条数
@@ -35,10 +47,11 @@ we_are_come_to_chat('GET', []) ->
     Timestamp = boss_mq:now("chats"),
     {ok, [{chats, Chats2}, {timestamp, Timestamp}, {limit, Limit}]}.
 
+%% 聊天记录列表
 list('GET', [Channel, CurPage]) ->
     Curpage = list_to_integer(CurPage),
 
-    PerPage = 6,
+    PerPage = 20,
 
     if
         Curpage > 1 ->
@@ -55,4 +68,5 @@ list('GET', [Channel, CurPage]) ->
     Chats      = boss_db:find(chat, Conditions, Options),
     Pages      = lists:seq(1, (Count div PerPage)+1),
     Chats2     = [{chat, Id, Channel, Nickname, [[]|unicode:characters_to_binary(Text, utf8, utf8)], calendar:gregorian_seconds_to_datetime(CreateTime)} || {chat, Id, Channel, Nickname, Text, CreateTime} <- Chats],
+
     {ok, [{channel, Channel}, {count, Count}, {perpage, PerPage}, {curpage, Curpage}, {action, "/chat/list/chats/"}, {pages, Pages}, {chats, Chats2}]}.
