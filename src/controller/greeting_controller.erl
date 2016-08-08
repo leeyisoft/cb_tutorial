@@ -1,4 +1,4 @@
--module(cb_tutorial_greeting_controller, [Req]).
+-module(greeting_controller, [Req]).
 -compile(export_all).
 
 index('GET', []) ->

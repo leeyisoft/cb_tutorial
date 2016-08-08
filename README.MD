@@ -143,15 +143,15 @@ CREATE TABLE `cb_tutorial`.`chats` (
   PRIMARY KEY (`id`)
 ) PACK_KEYS = Default, COLLATE = utf8_unicode_ci, ENGINE = MyISAM , COMMENT = '聊天室记录' ;
 
-CREATE TABLE `cb_tutorial`.`users` (
+CREATE TABLE `cb_tutorial`.`members` (
   `id` INT NOT NULL,
   `uuid` VARCHAR(36) NOT NULL COMMENT '用户全局唯一身份标示，标准uuid，36位长度',
-  `nickname` VARCHAR(40) NOT NULL COMMENT '用户昵称',
-  `email` VARCHAR(80) NOT NULL,
-  `mobile` VARCHAR(16) NOT NULL,
+  `nickname` VARCHAR(40) DEFAULT NULL COMMENT '用户昵称',
+  `email` VARCHAR(80) DEFAULT NULL,
+  `mobile` VARCHAR(16) DEFAULT NULL,
   `password` VARCHAR(40) NOT NULL COMMENT '登录密码',
   `sold` VARCHAR(40) CHARACTER SET 'utf8' NOT NULL,
-  `last_login_time` BIGINT(16) NOT NULL DEFAULT 0,
+  `last_login_time` BIGINT(16) DEFAULT 0,
   `last_login_ip` VARCHAR(40) NULL,
   `reg_time` BIGINT(16) NOT NULL,
   `reg_ip` VARCHAR(40) NULL,
@@ -164,6 +164,8 @@ CREATE TABLE `cb_tutorial`.`users` (
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC))
 PACK_KEYS = Default
 ROW_FORMAT = Default;
+
+INSERT INTO `cb_tutorial`.`members` (`id`, `uuid`, `nickname`, `password`, `sold`, `last_login_time`, `reg_time`, `login_times`, `signature`) VALUES ('1', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', 'leeyi', '123456', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', '0', '0', '0', 'hello');
 
 
 

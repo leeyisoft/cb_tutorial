@@ -1,4 +1,4 @@
--module(cb_tutorial_chat_controller, [Req]).
+-module(chat_controller, [Req]).
 -compile(export_all).
 
 
