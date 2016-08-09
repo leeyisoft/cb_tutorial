@@ -4,6 +4,8 @@
 /bower_components/
 /node_modules/
 *.beam
+*.app
+*.log
 log
 boss_webserver:8001.access
 boss_webserver:8001.auth

@@ -127,14 +127,14 @@ rm -rf deps
 ```sql
 CREATE SCHEMA `cb_tutorial` DEFAULT CHARACTER SET utf8 ;
 
-CREATE TABLE `cb_tutorial`.`greetings` (
+CREATE TABLE `cb_tutorial`.`cb_greetings` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `greeting_text` VARCHAR(140) NULL,
   `create_time` BIGINT(16) NULL DEFAULT 0 COMMENT '公历 0 年开始到以给定的日期和时间(当前的世界标准时间（UTC）)为结束间的秒数',
   PRIMARY KEY (`id`)
 ) PACK_KEYS = Default;
 
-CREATE TABLE `cb_tutorial`.`chats` (
+CREATE TABLE `cb_tutorial`.`cb_chats` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `channel` VARCHAR(45) NOT NULL DEFAULT 'chats' COMMENT '聊天频道',
   `nickname` VARCHAR(45) NOT NULL COMMENT '聊天用户昵称',
@@ -143,7 +143,7 @@ CREATE TABLE `cb_tutorial`.`chats` (
   PRIMARY KEY (`id`)
 ) PACK_KEYS = Default, COLLATE = utf8_unicode_ci, ENGINE = MyISAM , COMMENT = '聊天室记录' ;
 
-CREATE TABLE `cb_tutorial`.`members` (
+CREATE TABLE `cb_tutorial`.`cb_members` (
   `id` INT NOT NULL,
   `uuid` VARCHAR(36) NOT NULL COMMENT '用户全局唯一身份标示，标准uuid，36位长度',
   `nickname` VARCHAR(40) DEFAULT NULL COMMENT '用户昵称',
@@ -161,12 +161,18 @@ CREATE TABLE `cb_tutorial`.`members` (
   UNIQUE INDEX `nickname_UNIQUE` (`nickname` ASC),
   UNIQUE INDEX `mobile_UNIQUE` (`mobile` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
-  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC))
-PACK_KEYS = Default
-ROW_FORMAT = Default;
+  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `cb_tutorial`.`members` (`id`, `uuid`, `nickname`, `password`, `sold`, `last_login_time`, `reg_time`, `login_times`, `signature`) VALUES ('1', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', 'leeyi', '123456', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', '0', '0', '0', 'hello');
+CREATE TABLE `cb_tutorial`.`cb_counters` (
+  `name` varchar(255) NOT NULL,
+  `value` int(11) DEFAULT '0',
+  PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `cb_tutorial`.`cb_members` (`id`, `uuid`, `nickname`, `password`, `sold`, `last_login_time`, `reg_time`, `login_times`, `signature`) VALUES ('1', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', 'leeyi', '123456', 'e949f8a-5d42-11e6-9e4e-a45e60bb8fad', '0', '0', '0', 'hello');
 
 
+ALTER TABLE `cb_tutorial`.`counters` RENAME TO  `cb_tutorial`.`cb_counters`;
 
 ```
