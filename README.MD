@@ -175,4 +175,6 @@ INSERT INTO `cb_tutorial`.`cb_members` (`id`, `uuid`, `nickname`, `password`, `s
 
 ALTER TABLE `cb_tutorial`.`counters` RENAME TO  `cb_tutorial`.`cb_counters`;
 
+UPDATE `cb_tutorial`.`cb_members` SET `password`='84d11081dee3fec2e341be57be04e651d6080e65' WHERE `id`='1';
+
 ```

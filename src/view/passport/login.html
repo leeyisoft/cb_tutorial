@@ -1,0 +1,78 @@
+{% extends "common/base.html" %}
+{% block title %}welcome to login!{% endblock %}
+
+{% block body %}
+    <form method="post">
+        <table width="100%">
+            <tr>
+                <td colspan="2" align="left">
+                </td>
+            </tr>
+            <tr>
+            <th width="160">Who are you :</th>
+            <td align="left">
+                <input type="text" id="login_id" name="login_id" value="leeyi"/>
+                <span id="tips" style="color:red;">欢迎</span>
+            </td>
+            </tr>
+            <tr>
+            <th width="160">Enter a password:</th>
+            <td align="left">
+                <input type="password" id="password" name="password" value="123456"/>
+                <a href="JavaScript:;" onclick="submit();" >
+                    提交
+                </a>
+            </td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock %}
+{% block meta_style %}
+
+{% endblock %}
+{% block meta_scripts %}
+<link rel="stylesheet" href="/static/layer/skin/layer.css" media="all">
+<script src="/static/layer/layer.js"></script>
+<script type="text/javascript">
+    var limit = {{ limit }};
+
+    function submit() {
+        $('#tips').html('sending ...');
+        var login_id = $("#login_id").val();
+        var password = $("#password").val();
+
+        if (!login_id || undefined==login_id) {
+            $('#tips').html('login_id is empty');
+            return false;
+        }
+        if (!password || undefined==password) {
+            $('#tips').html('password is empty');
+            return false;
+        }
+        $.ajax({
+            url        : "{% url action ="login" %}",
+            type       : 'POST',
+            dataType   : 'json',
+            data       : 'login_id='+login_id+'&password='+password,
+            beforeSend : function() {
+            },
+            success : function(json) {
+                if (json.code==0) {
+                    $('#tips').html('ok');
+                    // $('#password').val('');
+                } else if(json.msg) {
+                    $('#tips').html(json.msg);
+                } else {
+                    $('#tips').html('error');
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+
+    });
+
+</script>
+{% endblock %}
